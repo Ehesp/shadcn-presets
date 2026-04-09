@@ -110,9 +110,7 @@ form.addEventListener("submit", async (event) => {
     setStatus("success", `Applied preset ${preset} to the current tab.`);
   } catch (error) {
     const message =
-      error instanceof Error
-        ? error.message
-        : "Chrome could not inject CSS into the current page.";
+      error instanceof Error ? error.message : "Chrome could not inject CSS into the current page.";
 
     setStatus("error", message);
   } finally {
