@@ -1,0 +1,20 @@
+{
+  "name": "shadcn-presets-extension",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "shadcn": "^4.1.2",
+    "shadcn-presets": "file:.."
+  },
+  "devDependencies": {
+    "@types/chrome": "latest",
+    "typescript": "^5",
+    "vite": "latest"
+  }
+}

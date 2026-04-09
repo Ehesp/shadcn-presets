@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>shadcn Presets</title>
+  </head>
+  <body>
+    <main class="popup">
+      <section class="panel">
+        <p class="eyebrow">shadcn-presets</p>
+        <h1>Inject a preset</h1>
+        <p class="description">
+          Paste a shadcn preset code and apply its CSS variables to the current tab.
+        </p>
+
+        <form id="preset-form" class="form">
+          <label class="field" for="preset-input">
+            <span>Preset value</span>
+            <input
+              id="preset-input"
+              name="preset"
+              type="text"
+              spellcheck="false"
+              placeholder="--preset b1ZjC5Fqt"
+              autofocus
+            />
+          </label>
+
+          <button id="apply-button" type="submit">Apply preset</button>
+        </form>
+
+        <p class="hint">
+          Supports both raw preset codes and copied values like <code>--preset b1ZjC5Fqt</code>.
+        </p>
+        <p id="status-message" class="status" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <script type="module" src="/src/popup.ts"></script>
+  </body>
+</html>

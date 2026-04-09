@@ -26,6 +26,8 @@
   },
   "scripts": {
     "build": "bun run scripts/build.ts",
+    "build:extension": "bun run --cwd ./extension build",
+    "dev:extension": "bun run --cwd ./extension dev",
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "generate:themes": "bun run scripts/generate-themes.ts",
