@@ -15,10 +15,10 @@ export {
   PRESET_FONTS,
   PRESET_RADII,
   type PresetConfig,
-} from "shadcn/preset"
+} from "shadcn/preset";
 
-export type { RegistryThemeItem } from "./themes.ts"
-export { THEMES } from "./themes.ts"
+export type { RegistryThemeItem } from "./themes.ts";
+export { THEMES } from "./themes.ts";
 
 export {
   buildRegistryTheme,
@@ -30,11 +30,8 @@ export {
   type ThemeBuildInput,
   type RegistryThemeResult,
   type ThemeCssVars,
-} from "./build-theme.ts"
+} from "./build-theme.ts";
 
-export { buildThemeCssText } from "./css.ts"
+export { buildThemeCssText } from "./css.ts";
 
-export {
-  presetToShadcnThemeCss,
-  presetConfigToThemeBuildInput,
-} from "./preset-to-css.ts"
+export { presetToShadcnThemeCss, presetConfigToThemeBuildInput } from "./preset-to-css.ts";

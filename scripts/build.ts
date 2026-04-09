@@ -2,15 +2,15 @@
 /**
  * ESM bundle (Bun) + declaration emit (tsc). Run from package root: `bun run build`
  */
-import { existsSync, rmSync } from "node:fs"
-import { join } from "node:path"
+import { existsSync, rmSync } from "node:fs";
+import { join } from "node:path";
 
-const root = join(import.meta.dir, "..")
+const root = join(import.meta.dir, "..");
 
 async function main() {
-  const dist = join(root, "dist")
+  const dist = join(root, "dist");
   if (existsSync(dist)) {
-    rmSync(dist, { recursive: true })
+    rmSync(dist, { recursive: true });
   }
 
   const result = await Bun.build({
@@ -21,25 +21,25 @@ async function main() {
     minify: true,
     sourcemap: "external",
     external: ["shadcn"],
-  })
+  });
 
   if (!result.success) {
     for (const log of result.logs) {
-      console.error(log)
+      console.error(log);
     }
-    process.exit(1)
+    process.exit(1);
   }
 
   const proc = Bun.spawnSync(["bun", "x", "tsc", "-p", "tsconfig.build.json"], {
     cwd: root,
     stdio: ["inherit", "inherit", "inherit"],
-  })
+  });
 
   if (proc.exitCode !== 0) {
-    process.exit(proc.exitCode ?? 1)
+    process.exit(proc.exitCode ?? 1);
   }
 
-  console.info("Built dist/")
+  console.info("Built dist/");
 }
 
-await main()
+await main();

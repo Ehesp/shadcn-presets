@@ -1,6 +1,6 @@
 // Aligned with apps/v4/lib/font-definitions.ts (family stacks for preset fonts).
 
-import type { PresetConfig } from "shadcn/preset"
+import type { PresetConfig } from "shadcn/preset";
 
 /** CSS `font-family` stacks for each `PRESET_FONTS` name (same strings as v4 create preview). */
 export const PRESET_FONT_FAMILY = {
@@ -28,15 +28,15 @@ export const PRESET_FONT_FAMILY = {
   merriweather: "'Merriweather Variable', serif",
   lora: "'Lora Variable', serif",
   "playfair-display": "'Playfair Display Variable', serif",
-} as const satisfies Record<PresetConfig["font"], string>
+} as const satisfies Record<PresetConfig["font"], string>;
 
-const FALLBACK_BODY = PRESET_FONT_FAMILY.inter
+const FALLBACK_BODY = PRESET_FONT_FAMILY.inter;
 
 export function getPresetFontFamily(name: string): string {
   if (name in PRESET_FONT_FAMILY) {
-    return PRESET_FONT_FAMILY[name as PresetConfig["font"]]
+    return PRESET_FONT_FAMILY[name as PresetConfig["font"]];
   }
-  return FALLBACK_BODY
+  return FALLBACK_BODY;
 }
 
 /**
@@ -44,15 +44,15 @@ export function getPresetFontFamily(name: string): string {
  * (`--font-sans` + `--font-heading` on the document root).
  */
 export function presetFontCssVars(font: string, fontHeading: string): Record<string, string> {
-  const body = getPresetFontFamily(font)
-  let heading: string
+  const body = getPresetFontFamily(font);
+  let heading: string;
   if (fontHeading === "inherit" || fontHeading === font) {
-    heading = body
+    heading = body;
   } else {
-    heading = getPresetFontFamily(fontHeading)
+    heading = getPresetFontFamily(fontHeading);
   }
   return {
     "font-sans": body,
     "font-heading": heading,
-  }
+  };
 }

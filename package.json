@@ -2,6 +2,17 @@
   "name": "shadcn-presets",
   "version": "0.1.0",
   "description": "Decode shadcn create preset codes to injectable theme CSS (uses shadcn/preset for the codec)",
+  "keywords": [
+    "css-variables",
+    "preset",
+    "shadcn",
+    "theme"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -13,29 +24,24 @@
       "default": "./dist/index.js"
     }
   },
-  "files": [
-    "dist",
-    "README.md"
-  ],
   "scripts": {
     "build": "bun run scripts/build.ts",
     "test": "bun test",
     "typecheck": "tsc --noEmit",
-    "generate:themes": "bun run scripts/generate-themes.ts"
-  },
-  "keywords": [
-    "shadcn",
-    "preset",
-    "theme",
-    "css-variables"
-  ],
-  "license": "MIT",
-  "devDependencies": {
-    "@types/bun": "latest",
-    "typescript": "^5"
+    "generate:themes": "bun run scripts/generate-themes.ts",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
   "dependencies": {
     "shadcn": "^4.1.2"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "oxfmt": "^0.44.0",
+    "oxlint": "^1.59.0",
+    "typescript": "^5"
   },
   "peerDependencies": {
     "typescript": "^5"

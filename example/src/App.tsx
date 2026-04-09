@@ -87,8 +87,8 @@ export function App() {
           <InfoIcon />
           <AlertTitle>Semantic tokens follow your preset</AlertTitle>
           <AlertDescription>
-            Buttons, inputs, and alerts below use the same CSS variables as shadcn create. Apply a preset to recolor the
-            whole page.
+            Buttons, inputs, and alerts below use the same CSS variables as shadcn create. Apply a
+            preset to recolor the whole page.
           </AlertDescription>
         </Alert>
 
@@ -99,11 +99,16 @@ export function App() {
                 <CardTitle className="text-2xl">Theme from preset string</CardTitle>
                 <CardDescription className="mt-2">
                   Decode a shadcn create preset (e.g.{" "}
-                  <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">b0</code>) and inject the same
-                  semantic CSS variables used in the create preview.
+                  <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">b0</code>) and
+                  inject the same semantic CSS variables used in the create preview.
                 </CardDescription>
               </div>
-              <Button type="button" variant="outline" size="sm" onClick={() => setDarkMode((d) => !d)}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setDarkMode((d) => !d)}
+              >
                 {darkMode ? "Light" : "Dark"} mode
               </Button>
             </div>
@@ -139,11 +144,21 @@ export function App() {
               <TabsContent value="forms" className="mt-4 space-y-4">
                 <div className="grid gap-2 sm:max-w-sm">
                   <Label htmlFor="demo-email">Email</Label>
-                  <Input id="demo-email" type="email" placeholder="you@example.com" autoComplete="off" />
+                  <Input
+                    id="demo-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    autoComplete="off"
+                  />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="demo-notes">Notes</Label>
-                  <Textarea id="demo-notes" placeholder="Type something…" rows={3} className="resize-y" />
+                  <Textarea
+                    id="demo-notes"
+                    placeholder="Type something…"
+                    rows={3}
+                    className="resize-y"
+                  />
                 </div>
                 <div className="grid gap-2 sm:max-w-xs">
                   <Label>Sample select</Label>
@@ -161,9 +176,15 @@ export function App() {
               </TabsContent>
               <TabsContent value="tokens" className="text-muted-foreground mt-4 space-y-2 text-sm">
                 <p>
-                  <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">--primary</code>,{" "}
-                  <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">--background</code>, chart colors,
-                  and radii all come from the merged theme when you apply a valid preset.
+                  <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">
+                    --primary
+                  </code>
+                  ,{" "}
+                  <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">
+                    --background
+                  </code>
+                  , chart colors, and radii all come from the merged theme when you apply a valid
+                  preset.
                 </p>
               </TabsContent>
             </Tabs>
@@ -179,8 +200,8 @@ export function App() {
                   <DialogHeader>
                     <DialogTitle>Apply preset</DialogTitle>
                     <DialogDescription>
-                      Paste a preset string from shadcn create. Try <span className="font-mono">b0</span> or encode your
-                      own design in the CLI.
+                      Paste a preset string from shadcn create. Try{" "}
+                      <span className="font-mono">b0</span> or encode your own design in the CLI.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-3 py-2">
@@ -219,7 +240,8 @@ export function App() {
           <CardFooter className="flex flex-col items-stretch gap-2 border-t pt-6 sm:flex-row sm:justify-between">
             <p className="text-muted-foreground text-xs">
               Variables are injected into a{" "}
-              <code className="font-mono">&lt;style id=&quot;{INJECTED_STYLE_ID}&quot;&gt;</code> tag.
+              <code className="font-mono">&lt;style id=&quot;{INJECTED_STYLE_ID}&quot;&gt;</code>{" "}
+              tag.
             </p>
           </CardFooter>
         </Card>
