@@ -47,6 +47,9 @@ bun install
 bun run dev
 ```
 
+![Before](.github/before.png)
+![After](.github/after.png)
+
 ## License
 
 MIT. Theme data and behavior are aligned with [shadcn/ui](https://github.com/shadcn-ui/ui).
