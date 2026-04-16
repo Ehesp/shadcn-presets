@@ -41,4 +41,11 @@ describe("presetConfigToThemeBuildInput", () => {
     });
     expect(input.chartColor).toBe("emerald");
   });
+
+  test("passes fontFamilyOverrides to theme build input", () => {
+    const input = presetConfigToThemeBuildInput(DEFAULT_PRESET_CONFIG, {
+      inter: '"Inter", sans-serif',
+    });
+    expect(input.fontFamilyOverrides).toEqual({ inter: '"Inter", sans-serif' });
+  });
 });

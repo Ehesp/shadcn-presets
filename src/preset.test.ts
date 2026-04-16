@@ -37,4 +37,15 @@ describe("presetToShadcnThemeCss", () => {
     expect(css).not.toBeNull();
     expect(css).toContain(":root");
   });
+
+  test("applies optional font family overrides in generated CSS", () => {
+    const code = encodePreset({});
+    const without = presetToShadcnThemeCss(code);
+    const withOverride = presetToShadcnThemeCss(code, { inter: '"Inter", sans-serif' });
+    expect(without).not.toBeNull();
+    expect(withOverride).not.toBeNull();
+    expect(without).toContain("'Inter Variable'");
+    expect(withOverride).toContain('"Inter"');
+    expect(withOverride).not.toContain("'Inter Variable'");
+  });
 });

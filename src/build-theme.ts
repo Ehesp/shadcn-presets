@@ -1,6 +1,6 @@
 // Theme merge logic vendored from apps/v4/registry/config.ts (buildRegistryTheme).
 
-import { PRESET_BASE_COLORS } from "shadcn/preset";
+import { PRESET_BASE_COLORS, type PresetConfig } from "shadcn/preset";
 
 import { presetFontCssVars } from "./font-families.ts";
 import { THEMES, type RegistryThemeItem } from "./themes.ts";
@@ -61,6 +61,8 @@ export type ThemeBuildInput = {
   font: string;
   /** Heading font id or `inherit` (matches v4 create). */
   fontHeading: string;
+  /** Optional stacks so names match how fonts are loaded (e.g. `next/font` / `@font-face`). */
+  fontFamilyOverrides?: Partial<Record<PresetConfig["font"], string>>;
 };
 
 export function buildRegistryTheme(config: ThemeBuildInput): RegistryThemeResult {
@@ -106,7 +108,7 @@ export function buildRegistryTheme(config: ThemeBuildInput): RegistryThemeResult
     }
   }
 
-  const fontVars = presetFontCssVars(config.font, config.fontHeading);
+  const fontVars = presetFontCssVars(config.font, config.fontHeading, config.fontFamilyOverrides);
   Object.assign(lightVars, fontVars);
 
   return {

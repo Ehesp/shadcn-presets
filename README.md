@@ -35,7 +35,20 @@ element.textContent = css;
 
 ## Fonts
 
-Although the preset works with specific fonts and will apply the correct variables, it still requires these are loaded into your application (using `@fontsource`, `next/font` etc).
+Font support is a little nuanced. The `presetToShadcnThemeCss` function emits `--font-sans` and `--font-heading` on `:root` for the preset’s body and heading font ids. Whether those faces actually render depends on:
+
+1. The font being loaded in your app (e.g. Google Fonts, `next/font`, self-hosted CSS).
+2. The **family name** in the stack matching the `@font-face` / loader (see [font-families.ts](src/font-families.ts) for the built-in defaults, which assume variable fonts where applicable).
+
+If the default stack does not match what your build registers (e.g. Google Fonts shows `font-family: "Figtree", sans-serif;` for a static build), pass the **value** only—no trailing semicolon; the serializer adds the rule terminator:
+
+```ts
+presetToShadcnThemeCss("b1ZjC5Fqt", {
+  figtree: `"Figtree", sans-serif`,
+});
+```
+
+You can also pass overrides through `buildRegistryTheme` / `presetConfigToThemeBuildInput` via `fontFamilyOverrides` if you assemble the theme yourself.
 
 ## Example
 

@@ -30,29 +30,43 @@ export const PRESET_FONT_FAMILY = {
   "playfair-display": "'Playfair Display Variable', serif",
 } as const satisfies Record<PresetConfig["font"], string>;
 
-const FALLBACK_BODY = PRESET_FONT_FAMILY.inter;
-
-export function getPresetFontFamily(name: string): string {
-  if (name in PRESET_FONT_FAMILY) {
-    return PRESET_FONT_FAMILY[name as PresetConfig["font"]];
+export function getPresetFontFamily(
+  name: string,
+  overrides?: Partial<Record<PresetConfig["font"], string>>,
+): string | undefined {
+  const merged = { ...PRESET_FONT_FAMILY, ...overrides };
+  if (name in merged) {
+    return merged[name as PresetConfig["font"]];
   }
-  return FALLBACK_BODY;
+  return undefined;
 }
 
 /**
  * CSS custom properties for `:root` (Tailwind `font-sans` / heading utilities), matching v4 create
  * (`--font-sans` + `--font-heading` on the document root).
  */
-export function presetFontCssVars(font: string, fontHeading: string): Record<string, string> {
-  const body = getPresetFontFamily(font);
-  let heading: string;
+/**
+ * Emits `--font-sans` / `--font-heading` only for ids that resolve (defaults + optional overrides).
+ * If a id is unknown, that key is omitted so callers do not inject a mismatched stack.
+ */
+export function presetFontCssVars(
+  font: string,
+  fontHeading: string,
+  overrides?: Partial<Record<PresetConfig["font"], string>>,
+): Record<string, string> {
+  const body = getPresetFontFamily(font, overrides);
+  let heading: string | undefined;
   if (fontHeading === "inherit" || fontHeading === font) {
     heading = body;
   } else {
-    heading = getPresetFontFamily(fontHeading);
+    heading = getPresetFontFamily(fontHeading, overrides);
   }
-  return {
-    "font-sans": body,
-    "font-heading": heading,
-  };
+  const out: Record<string, string> = {};
+  if (body !== undefined) {
+    out["font-sans"] = body;
+  }
+  if (heading !== undefined) {
+    out["font-heading"] = heading;
+  }
+  return out;
 }

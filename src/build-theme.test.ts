@@ -76,6 +76,12 @@ describe("buildRegistryTheme", () => {
     expect(built.cssVars.light.radius).toBe(medium?.value);
   });
 
+  test("omits font CSS vars when font id does not resolve", () => {
+    const built = buildRegistryTheme(minimalInput({ font: "not-a-font" }));
+    expect(built.cssVars.light["font-sans"]).toBeUndefined();
+    expect(built.cssVars.light["font-heading"]).toBeUndefined();
+  });
+
   test("BASE_COLORS lists only preset base palettes", () => {
     expect(BASE_COLORS.length).toBeGreaterThan(0);
     expect(BASE_COLORS.every((t) => t.cssVars?.light)).toBe(true);

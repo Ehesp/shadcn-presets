@@ -5,7 +5,10 @@ import { decodePreset, type PresetConfig, V1_CHART_COLOR_MAP } from "shadcn/pres
 /**
  * Maps a decoded preset to theme build input (parity with v4 create search-param normalization).
  */
-export function presetConfigToThemeBuildInput(decoded: PresetConfig): ThemeBuildInput {
+export function presetConfigToThemeBuildInput(
+  decoded: PresetConfig,
+  fontFamilyOverrides?: Partial<Record<PresetConfig["font"], string>>,
+): ThemeBuildInput {
   let chartColor: string = decoded.chartColor ?? V1_CHART_COLOR_MAP[decoded.theme] ?? decoded.theme;
 
   let theme: string = decoded.theme;
@@ -29,6 +32,7 @@ export function presetConfigToThemeBuildInput(decoded: PresetConfig): ThemeBuild
     radius: effectiveRadius,
     font: decoded.font,
     fontHeading: decoded.fontHeading,
+    fontFamilyOverrides,
   };
 }
 
@@ -36,16 +40,22 @@ export function presetConfigToThemeBuildInput(decoded: PresetConfig): ThemeBuild
  * Decodes a shadcn create/init preset code and returns CSS for `:root` and `.dark`
  * (semantic variables), suitable for injecting into a `<style>` tag.
  *
+ * Optional `fontFamilyOverrides` merges with built-in stacks so `--font-sans` / `--font-heading`
+ * match your loaded fonts (same shape as {@link ThemeBuildInput.fontFamilyOverrides}).
+ *
  * Returns `null` if the code is invalid or theme data cannot be resolved.
  */
-export function presetToShadcnThemeCss(presetCode: string): string | null {
+export function presetToShadcnThemeCss(
+  presetCode: string,
+  fontFamilyOverrides?: Partial<Record<PresetConfig["font"], string>>,
+): string | null {
   const decoded = decodePreset(presetCode.trim());
   if (!decoded) {
     return null;
   }
 
   try {
-    const input = presetConfigToThemeBuildInput(decoded);
+    const input = presetConfigToThemeBuildInput(decoded, fontFamilyOverrides);
     const registryTheme = buildRegistryTheme(input);
     return buildThemeCssText(registryTheme.cssVars);
   } catch {
