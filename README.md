@@ -13,11 +13,15 @@ npm i shadcn-presets
 ```ts
 import { presetToShadcnThemeCss } from "shadcn-presets";
 
-const css = presetToShadcnThemeCss("b1ZjC5Fqt");
+const theme = presetToShadcnThemeCss("b1ZjC5Fqt");
 
-if (!css) {
+if (!theme) {
   throw new Error("Invalid preset value");
 }
+
+const { css, build } = theme;
+// `build` is the registry theme object (`build.cssVars.light`, `build.name`, …) plus
+// `build.fontSans` / `build.fontHeading` when those variables are emitted.
 
 const INJECTED_STYLE_ID = "shadcn-presets";
 
@@ -43,9 +47,10 @@ Font support is a little nuanced. The `presetToShadcnThemeCss` function emits `-
 If the default stack does not match what your build registers (e.g. Google Fonts shows `font-family: "Figtree", sans-serif;` for a static build), pass the **value** only—no trailing semicolon; the serializer adds the rule terminator:
 
 ```ts
-presetToShadcnThemeCss("b1ZjC5Fqt", {
+const { css, build } = presetToShadcnThemeCss("b1ZjC5Fqt", {
   figtree: `"Figtree", sans-serif`,
-});
+})!;
+// build.fontSans reflects the resolved `--font-sans` stack
 ```
 
 You can also pass overrides through `buildRegistryTheme` / `presetConfigToThemeBuildInput` via `fontFamilyOverrides` if you assemble the theme yourself.

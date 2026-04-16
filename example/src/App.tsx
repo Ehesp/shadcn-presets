@@ -54,8 +54,8 @@ export function App() {
   const applyPreset = React.useCallback(() => {
     const code = presetInput.trim();
     setError(null);
-    const css = presetToShadcnThemeCss(code);
-    if (!css) {
+    const result = presetToShadcnThemeCss(code);
+    if (!result) {
       setError("Invalid preset code or theme could not be resolved.");
       return;
     }
@@ -65,7 +65,7 @@ export function App() {
       el.id = INJECTED_STYLE_ID;
       document.head.appendChild(el);
     }
-    el.textContent = css;
+    el.textContent = result.css;
     setAppliedPreset(code);
     setDialogOpen(false);
   }, [presetInput]);

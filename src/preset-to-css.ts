@@ -1,4 +1,9 @@
-import { buildRegistryTheme, getThemesForBaseColor, type ThemeBuildInput } from "./build-theme.ts";
+import {
+  buildRegistryTheme,
+  getThemesForBaseColor,
+  type RegistryThemeResult,
+  type ThemeBuildInput,
+} from "./build-theme.ts";
 import { buildThemeCssText } from "./css.ts";
 import { decodePreset, type PresetConfig, V1_CHART_COLOR_MAP } from "shadcn/preset";
 
@@ -36,9 +41,24 @@ export function presetConfigToThemeBuildInput(
   };
 }
 
+/** Structured output from {@link buildRegistryTheme}, plus resolved font stacks for convenience. */
+export type PresetToShadcnThemeCssBuild = RegistryThemeResult & {
+  /** Resolved `font-family` value for `--font-sans` when that variable is emitted. */
+  fontSans?: string;
+  /** Resolved `font-family` value for `--font-heading` when that variable is emitted. */
+  fontHeading?: string;
+};
+
+export type PresetToShadcnThemeCssResult = {
+  /** Serialized `:root` + `.dark` CSS (same as before this API shape existed). */
+  css: string;
+  /** Theme object and shorthand font strings (`build.cssVars.light` holds all `:root` vars). */
+  build: PresetToShadcnThemeCssBuild;
+};
+
 /**
- * Decodes a shadcn create/init preset code and returns CSS for `:root` and `.dark`
- * (semantic variables), suitable for injecting into a `<style>` tag.
+ * Decodes a shadcn create/init preset code and returns serialized CSS plus the structured theme
+ * (`css` for a `<style>` tag, `build` for tokens like {@link PresetToShadcnThemeCssBuild.fontSans}).
  *
  * Optional `fontFamilyOverrides` merges with built-in stacks so `--font-sans` / `--font-heading`
  * match your loaded fonts (same shape as {@link ThemeBuildInput.fontFamilyOverrides}).
@@ -48,7 +68,7 @@ export function presetConfigToThemeBuildInput(
 export function presetToShadcnThemeCss(
   presetCode: string,
   fontFamilyOverrides?: Partial<Record<PresetConfig["font"], string>>,
-): string | null {
+): PresetToShadcnThemeCssResult | null {
   const decoded = decodePreset(presetCode.trim());
   if (!decoded) {
     return null;
@@ -57,7 +77,16 @@ export function presetToShadcnThemeCss(
   try {
     const input = presetConfigToThemeBuildInput(decoded, fontFamilyOverrides);
     const registryTheme = buildRegistryTheme(input);
-    return buildThemeCssText(registryTheme.cssVars);
+    const light = registryTheme.cssVars.light;
+    const build: PresetToShadcnThemeCssBuild = {
+      ...registryTheme,
+      fontSans: light["font-sans"],
+      fontHeading: light["font-heading"],
+    };
+    return {
+      css: buildThemeCssText(registryTheme.cssVars),
+      build,
+    };
   } catch {
     return null;
   }

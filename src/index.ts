@@ -34,4 +34,9 @@ export {
 
 export { buildThemeCssText } from "./css.ts";
 
-export { presetToShadcnThemeCss, presetConfigToThemeBuildInput } from "./preset-to-css.ts";
+export {
+  presetToShadcnThemeCss,
+  presetConfigToThemeBuildInput,
+  type PresetToShadcnThemeCssBuild,
+  type PresetToShadcnThemeCssResult,
+} from "./preset-to-css.ts";

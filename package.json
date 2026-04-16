@@ -1,6 +1,6 @@
 {
   "name": "shadcn-presets",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Decode shadcn create preset codes to injectable theme CSS (uses shadcn/preset for the codec)",
   "keywords": [
     "css-variables",
@@ -34,7 +34,8 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
+    "fmt:check": "oxfmt --check",
+    "prepublishOnly": "bun run build"
   },
   "dependencies": {
     "next": "^16.2.4",

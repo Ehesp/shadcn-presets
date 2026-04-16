@@ -85,11 +85,12 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-  const css = presetToShadcnThemeCss(preset);
-  if (!css) {
+  const result = presetToShadcnThemeCss(preset);
+  if (!result) {
     setStatus("error", "That preset code is invalid or could not be resolved.");
     return;
   }
+  const { css } = result;
 
   applyButton.disabled = true;
   applyButton.textContent = "Applying...";
