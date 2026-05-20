@@ -4,7 +4,11 @@ Generate CSS variables from a [Shadcn](https://ui.shadcn.com) preset.
 
 This package allows you to mimic the [Shadcn create page](https://ui.shadcn.com/create) by dynamically generating the CSS required to override your Shadcn CSS variables within a page.
 
-## Usage
+## Extension
+
+This project ships a [Chrome Extension](https://chromewebstore.google.com/detail/shadcn-preset-injector/llnebngamacamifijnaflamnjfejemhj?authuser=0&hl=en) to apply a preset to any website.
+
+## Package Usage
 
 ```bash
 npm i shadcn-presets
