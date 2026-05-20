@@ -37,9 +37,23 @@ if (!element) {
 element.textContent = css;
 ```
 
+## Syncing theme data
+
+From the monorepo (uses `apps/v4/registry/themes.ts` when present):
+
+```bash
+bun run generate:themes
+```
+
+To pull only from the public registry:
+
+```bash
+THEMES_SOURCE=remote bun run generate:themes
+```
+
 ## Fonts
 
-Font support is a little nuanced. The `presetToShadcnThemeCss` function emits `--font-sans` and `--font-heading` on `:root` for the preset’s body and heading font ids. Whether those faces actually render depends on:
+Font support is a little nuanced. The `presetToShadcnThemeCss` function emits `--font-sans` and `--font-heading` on `:root` for the preset’s body and heading font ids (including `eb-garamond` and `instrument-serif`). Whether those faces actually render depends on:
 
 1. The font being loaded in your app (e.g. Google Fonts, `next/font`, self-hosted CSS).
 2. The **family name** in the stack matching the `@font-face` / loader (see [font-families.ts](src/font-families.ts) for the built-in defaults, which assume variable fonts where applicable).

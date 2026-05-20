@@ -13,9 +13,20 @@ export {
   PRESET_BASE_COLORS,
   PRESET_THEMES,
   PRESET_FONTS,
+  PRESET_FONT_HEADINGS,
+  PRESET_ICON_LIBRARIES,
+  PRESET_MENU_ACCENTS,
+  PRESET_MENU_COLORS,
+  PRESET_CHART_COLORS,
   PRESET_RADII,
   type PresetConfig,
 } from "shadcn/preset";
+
+export {
+  PRESET_FONT_FAMILY,
+  getPresetFontFamily,
+  presetFontCssVars,
+} from "./font-families.ts";
 
 export type { RegistryThemeItem } from "./themes.ts";
 export { THEMES } from "./themes.ts";

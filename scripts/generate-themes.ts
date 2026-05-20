@@ -1,16 +1,17 @@
 #!/usr/bin/env bun
 /**
- * Generates src/themes.ts from the public shadcn registry only.
+ * Generates src/themes.ts from v4 registry (monorepo) or the public shadcn registry.
  *
- * Sources (in order per theme name):
+ * Default: apps/v4/registry/themes.ts when present (monorepo checkout).
+ * Override: REGISTRY_URL=https://ui.shadcn.com/r or THEMES_SOURCE=remote
+ *
+ * Per theme name in PRESET_THEMES, remote fallback order:
  * 1. Embedded items in styles/new-york-v4/registry.json (type registry:theme)
  * 2. styles/new-york-v4/theme-{name}.json when present
- * 3. colors/{name}.json (inlineColors.light / dark)
- *
- * REGISTRY_URL — default https://ui.shadcn.com/r
+ * 3. colors/{name}.json (inlineColors.light / dark) — used for legacy "gray"
  */
 
-import { writeFileSync } from "fs";
+import { existsSync, writeFileSync } from "fs";
 import { join } from "path";
 
 import { PRESET_THEMES } from "shadcn/preset";
@@ -28,8 +29,10 @@ type RegistryThemeItem = {
 
 /** Run via `bun run generate:themes` from the package root so `src/themes.ts` resolves. */
 const OUT = join(process.cwd(), "src/themes.ts");
+const V4_THEMES_PATH = join(process.cwd(), "../apps/v4/registry/themes.ts");
 
 const REGISTRY_URL = (process.env.REGISTRY_URL ?? "https://ui.shadcn.com/r").replace(/\/$/, "");
+const THEMES_SOURCE = process.env.THEMES_SOURCE ?? "auto";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -111,70 +114,126 @@ function emitThemesFile(themes: RegistryThemeItem[]) {
 `;
 
   const body = `export type RegistryThemeItem = {
-  name: string
-  title: string
-  type: "registry:theme"
+  name: string;
+  title: string;
+  type: "registry:theme";
   cssVars?: {
-    light?: Record<string, string>
-    dark?: Record<string, string>
-    theme?: Record<string, string>
-  }
-}
+    light?: Record<string, string>;
+    dark?: Record<string, string>;
+    theme?: Record<string, string>;
+  };
+};
 
-export const THEMES: RegistryThemeItem[] = ${JSON.stringify(themes, null, 2)} as RegistryThemeItem[]
+export const THEMES: RegistryThemeItem[] = ${JSON.stringify(themes, null, 2)} as RegistryThemeItem[];
 `;
 
   writeFileSync(OUT, header + body, "utf8");
 }
 
-async function main() {
+async function loadV4ThemesMap(): Promise<Map<string, RegistryThemeItem>> {
+  const mod = (await import(V4_THEMES_PATH)) as {
+    THEMES: Array<{
+      name: string;
+      title: string;
+      type: string;
+      cssVars?: RegistryThemeItem["cssVars"];
+    }>;
+  };
+  const map = new Map<string, RegistryThemeItem>();
+  for (const theme of mod.THEMES) {
+    map.set(theme.name, {
+      name: theme.name,
+      title: theme.title,
+      type: "registry:theme",
+      cssVars: theme.cssVars,
+    });
+  }
+  return map;
+}
+
+async function fetchRemoteThemesMap(): Promise<Map<string, RegistryThemeItem>> {
   const registryUrl = `${REGISTRY_URL}/styles/new-york-v4/registry.json`;
   console.info(`Fetching ${registryUrl}`);
   const registry = (await fetchJson(registryUrl)) as RegistryJson;
-  const fromRegistry = buildThemesMapFromRegistry(registry);
+  return buildThemesMapFromRegistry(registry);
+}
+
+async function resolveThemeFromRemote(
+  name: string,
+  fromRegistry: Map<string, RegistryThemeItem>,
+): Promise<RegistryThemeItem | null> {
+  if (fromRegistry.has(name)) {
+    return fromRegistry.get(name)!;
+  }
+
+  const themeFileUrl = `${REGISTRY_URL}/styles/new-york-v4/theme-${name}.json`;
+  const themeFileData = (await tryFetchJson(themeFileUrl)) as {
+    name?: string;
+    type?: string;
+    cssVars?: RegistryThemeItem["cssVars"];
+  } | null;
+
+  if (
+    themeFileData?.type === "registry:theme" &&
+    themeFileData.cssVars?.light &&
+    themeFileData.cssVars?.dark
+  ) {
+    const itemName = themeFileData.name ?? `theme-${name}`;
+    return registryItemToTheme({
+      name: itemName.startsWith("theme-") ? itemName : `theme-${name}`,
+      cssVars: themeFileData.cssVars as NonNullable<RegistryThemeItem["cssVars"]>,
+    });
+  }
+
+  const colorUrl = `${REGISTRY_URL}/colors/${name}.json`;
+  const colorData = (await tryFetchJson(colorUrl)) as {
+    inlineColors?: {
+      light: Record<string, string>;
+      dark: Record<string, string>;
+    };
+  } | null;
+
+  if (colorData?.inlineColors?.light && colorData?.inlineColors?.dark) {
+    return colorsJsonToTheme(name, colorData as Parameters<typeof colorsJsonToTheme>[1]);
+  }
+
+  return null;
+}
+
+async function main() {
+  const useV4 =
+    THEMES_SOURCE === "v4" ||
+    (THEMES_SOURCE === "auto" && existsSync(V4_THEMES_PATH));
+
+  let v4Map: Map<string, RegistryThemeItem> | null = null;
+  let remoteMap: Map<string, RegistryThemeItem> | null = null;
+
+  if (useV4) {
+    console.info(`Loading themes from ${V4_THEMES_PATH}`);
+    v4Map = await loadV4ThemesMap();
+  }
+
+  if (THEMES_SOURCE === "remote" || !useV4) {
+    remoteMap = await fetchRemoteThemesMap();
+  }
 
   const uniqueNames = Array.from(new Set(PRESET_THEMES as readonly string[]));
   const result: RegistryThemeItem[] = [];
   const missing: string[] = [];
 
   for (const name of uniqueNames) {
-    if (fromRegistry.has(name)) {
-      result.push(fromRegistry.get(name)!);
+    if (v4Map?.has(name)) {
+      result.push(v4Map.get(name)!);
       continue;
     }
 
-    const themeFileUrl = `${REGISTRY_URL}/styles/new-york-v4/theme-${name}.json`;
-    const themeFileData = (await tryFetchJson(themeFileUrl)) as {
-      name?: string;
-      type?: string;
-      cssVars?: RegistryThemeItem["cssVars"];
-    } | null;
-
-    if (
-      themeFileData?.type === "registry:theme" &&
-      themeFileData.cssVars?.light &&
-      themeFileData.cssVars?.dark
-    ) {
-      const itemName = themeFileData.name ?? `theme-${name}`;
-      result.push(
-        registryItemToTheme({
-          name: itemName.startsWith("theme-") ? itemName : `theme-${name}`,
-          cssVars: themeFileData.cssVars as NonNullable<RegistryThemeItem["cssVars"]>,
-        }),
-      );
-      continue;
+    if (!remoteMap) {
+      remoteMap = await fetchRemoteThemesMap();
     }
 
-    const colorUrl = `${REGISTRY_URL}/colors/${name}.json`;
-    const colorData = (await tryFetchJson(colorUrl)) as {
-      inlineColors?: {
-        light: Record<string, string>;
-        dark: Record<string, string>;
-      };
-    } | null;
-
-    if (colorData?.inlineColors?.light && colorData?.inlineColors?.dark) {
-      result.push(colorsJsonToTheme(name, colorData as Parameters<typeof colorsJsonToTheme>[1]));
+    const theme = await resolveThemeFromRemote(name, remoteMap);
+    if (theme) {
+      result.push(theme);
       continue;
     }
 
@@ -183,7 +242,7 @@ async function main() {
 
   if (missing.length > 0) {
     throw new Error(
-      `Missing themes (not in registry.json, theme-*.json, or colors/*.json): ${missing.join(", ")}`,
+      `Missing themes (not in v4 registry or remote registry): ${missing.join(", ")}`,
     );
   }
 

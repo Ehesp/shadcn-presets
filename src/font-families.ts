@@ -28,6 +28,8 @@ export const PRESET_FONT_FAMILY = {
   merriweather: "'Merriweather Variable', serif",
   lora: "'Lora Variable', serif",
   "playfair-display": "'Playfair Display Variable', serif",
+  "eb-garamond": "'EB Garamond Variable', serif",
+  "instrument-serif": "'Instrument Serif', serif",
 } as const satisfies Record<PresetConfig["font"], string>;
 
 export function getPresetFontFamily(

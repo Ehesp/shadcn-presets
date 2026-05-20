@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { decodePreset, encodePreset } from "shadcn/preset";
+import { getTheme } from "./build-theme.ts";
 import { presetToShadcnThemeCss } from "./preset-to-css.ts";
 
 describe("presetToShadcnThemeCss", () => {
@@ -55,5 +56,20 @@ describe("presetToShadcnThemeCss", () => {
     expect(out!.build.type).toBe("registry:theme");
     expect(out!.build.fontSans).toBe(out!.build.cssVars.light["font-sans"]);
     expect(out!.build.fontHeading).toBe(out!.build.cssVars.light["font-heading"]);
+  });
+
+  test("emits font CSS for eb-garamond preset", () => {
+    const out = presetToShadcnThemeCss(
+      encodePreset({ font: "eb-garamond", fontHeading: "instrument-serif" }),
+    );
+    expect(out).not.toBeNull();
+    expect(out!.css).toContain("--font-sans: 'EB Garamond Variable', serif");
+    expect(out!.css).toContain("--font-heading: 'Instrument Serif', serif");
+  });
+
+  test("neutral base theme uses tonal chart palette (v4 parity)", () => {
+    const neutral = getTheme("neutral");
+    expect(neutral?.cssVars?.light?.["chart-1"]).toBe("oklch(0.87 0 0)");
+    expect(neutral?.cssVars?.light?.["chart-2"]).toBe("oklch(0.556 0 0)");
   });
 });

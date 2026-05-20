@@ -1,6 +1,6 @@
 {
   "name": "shadcn-presets",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Decode shadcn create preset codes to injectable theme CSS (uses shadcn/preset for the codec)",
   "keywords": [
     "css-variables",
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "next": "^16.2.4",
-    "shadcn": "^4.1.2"
+    "shadcn": "^4.7.0"
   },
   "devDependencies": {
     "@types/bun": "latest",
